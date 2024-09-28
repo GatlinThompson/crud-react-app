@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import Home from "./components/Home";
 import About from "./components/About";
 import Projects from "./components/Projects";
@@ -10,28 +10,28 @@ import Project from "./components/Project";
 
 export const AppContext = createContext();
 
-//example projects
-const projectArry = [
-  {
-    id: 1,
-    title: "A Big Project",
-    description: "foo bar tar",
-  },
-  {
-    id: 2,
-    title: "Another Big Project",
-    description: "foo bar tar",
-  },
-];
-
 export default function App() {
-  const [projects, setProjects] = useState(projectArry);
-  const [idxCount, setIdxCount] = useState(projectArry.length);
+  const [projects, setProjects] = useState([]);
+  const [DBChange, setDBChange] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/projects", {
+      method: "GET",
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((resp) => {
+        setProjects(resp);
+        setDBChange(false);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, [DBChange]);
 
   return (
-    <AppContext.Provider
-      value={{ projects, setProjects, idxCount, setIdxCount }}
-    >
+    <AppContext.Provider value={{ projects, setProjects, setDBChange }}>
       <div className="App">
         <BrowserRouter>
           <Routes>

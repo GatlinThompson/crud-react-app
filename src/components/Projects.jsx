@@ -24,8 +24,8 @@ export default function Projects() {
           </tr>
         </thead>
         <tbody>
-          {projects.map((project) => (
-            <ProjectItem key={project.id} project={project} />
+          {projects.map((project, i) => (
+            <ProjectItem key={project._id} project={project} id={i} />
           ))}
         </tbody>
       </table>
