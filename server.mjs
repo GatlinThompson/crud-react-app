@@ -4,6 +4,8 @@ import express from "express";
 import path from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import { connect } from "./server/config/db/connect.js";
+connect("mongodb://127.0.0.1:27017/projectsdb");
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

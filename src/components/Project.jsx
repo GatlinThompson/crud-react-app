@@ -48,7 +48,7 @@ export default function Project() {
       url = "";
       method = "POST";
     }
-    console.log(proj);
+
     fetch(`/api/projects/${url}`, {
       method: method,
       headers: {

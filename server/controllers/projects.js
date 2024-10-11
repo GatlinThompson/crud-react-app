@@ -1,61 +1,84 @@
-let projArray = [
-  {
-    id: 1,
-    _id: "23g9423o4n23o4ni23hb4nazldasd",
-    title: "Foo Project",
-    description: "A cool bar project",
-  },
-  {
-    id: 2,
-    _id: "23g94232o4n23o4ni23hb4nazldasd",
-    title: "Foo Bar Project",
-    description: "Another cool bar project",
-  },
-];
+import { Project } from "../models/project.js";
 
 //Get Method
-export const allProjectsAPI = (req, res, next) => {
-  return res.send(JSON.stringify(projArray));
+export const allProjectsAPI = async (req, res) => {
+  try {
+    const projects = await Project.find();
+    res.json(projects); //return projects
+  } catch (err) {
+    res.json({
+      success: false,
+      message: "GET Query Failed",
+      error: err.message,
+    });
+  }
 };
 
 //Post Method
-export const postProjectAPI = (req, res, next) => {
-  //create project orbject
-  const proj = {
-    id: projArray.length + 1,
-    _id: `23g9423o4n23o4nasdasdi23hb4nazldasd${Math.random()}`, //random string insert
-    title: req.body.title,
-    description: req.body.description,
-  };
-  projArray.push(proj); //push project
-  return res.send(projArray);
+export const postProjectAPI = async (req, res) => {
+  try {
+    //new project object
+    let newProject = {
+      title: req.body.title,
+      description: req.body.description,
+    };
+
+    const project = await Project.create(newProject); //create project
+    res.json({
+      success: true,
+      method: "POST",
+      message: "POST Query Success",
+      id_created: project._id,
+    });
+  } catch (err) {
+    res.json({
+      success: false,
+      message: "POST Query Failed",
+      error: err.message,
+    });
+  }
 };
 
 // Delete Method
-export const deleteProjectAPI = (req, res, next) => {
-  const { id } = req.params; // get id
-  projArray = projArray.filter((proj) => proj._id != id); // filter out delete project
-  return res.send(projArray); //send projects array
+export const deleteProjectAPI = async (req, res, next) => {
+  try {
+    const { id } = req.params; // get project id
+    const project = await Project.deleteOne({ _id: id }); //delete where _id = id
+    res.json({
+      success: true,
+      method: "DELETE",
+      message: "DELETE Query Success",
+      id_created: project._id,
+    });
+  } catch (err) {
+    res.json({
+      success: false,
+      message: "DELETE Query Failed",
+      error: err.message,
+    });
+  }
 };
 
 //Put Method
-export const updateProjectAPI = (req, res, next) => {
-  const { id } = req.params; // get id
+export const updateProjectAPI = async (req, res, next) => {
+  try {
+    const { id } = req.params; // get id
 
-  projArray = projArray.map((p) => {
-    // create updated project
-    //set porject based on matching ids
-    let updateProject =
-      p._id == id
-        ? {
-            ...p,
-            title: req.body.title,
-            description: req.body.description,
-          }
-        : p;
-
-    return updateProject;
-  });
-
-  return res.send(projArray); //send projects array
+    const project = await Project.updateOne(
+      { _id: id },
+      { title: req.body.title, description: req.body.description }
+    );
+    res.status.json({
+      success: true,
+      method: "PUT",
+      message: "PUT Query Success",
+      id_created: project._id,
+    });
+  } catch (err) {
+    res.json({
+      success: false,
+      message: "PUT Query Failed",
+      error: err.message,
+    });
+  }
 };
